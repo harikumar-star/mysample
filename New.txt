@@ -1,1 +1,62 @@
 Hi
+package Zipcodes;
+
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
+public class InsertZipYoutube {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		//TO  Zip file 
+		try {
+			ZipParameters zip = new ZipParameters();
+			zip.setEncryptFiles(true);
+			zip.setCompressionLevel(CompressionLevel.NORMAL);
+			zip.setEncryptionMethod(EncryptionMethod.AES);
+			
+			net.lingala.zip4j.ZipFile zipfile = new net.lingala.zip4j.ZipFile("zip1.zip","123".toCharArray());
+			
+			zipfile.addFile("E:\\pdf\\java.pdf",zip);
+			System.out.println(zipfile.getFile().getAbsolutePath());
+			String filepath = zipfile.getFile().getAbsolutePath();
+			System.out.println("compressed");
+			Class.forName("oracle.jdbc.driver.OracleDriver");  
+			Connection con=DriverManager.getConnection(  
+			"jdbc:oracle:thin:@localhost:1521:xe","system","12345");  
+			              
+			PreparedStatement ps=con.prepareStatement("insert into E values(?,?)");  
+			ps.setString(1,"zip");  
+			  
+			FileInputStream fin=new FileInputStream(filepath);  
+			ps.setBinaryStream(2,fin,fin.available());  
+			int i=ps.executeUpdate();  
+			System.out.println(i+" records affected");  
+			          
+			con.close();  
+			
+			
+			
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+
+}
+
+
+
+<dependency>
+    <groupId>net.lingala.zip4j</groupId>
+    <artifactId>zip4j</artifactId>
+    <version>2.10.0</version>
+</dependency>
